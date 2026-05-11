@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBI Ledger</title>
+
+  <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #1e3a8a, #2563eb);
+      min-height: 100vh;
+      color: white;
+    }
+
+    .navbar {
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      background: white;
+      color: #2563eb;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 80px 20px 40px;
+    }
+
+    .hero h1 {
+      font-size: 52px;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 20px;
+      opacity: 0.9;
+    }
+
+    .main-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .card {
+      width: 450px;
+      background: white;
+      color: black;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1e3a8a;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .submit-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .message-box {
+      margin-top: 16px;
+      padding: 12px;
+      background: #eff6ff;
+      border-radius: 10px;
+      color: #1e3a8a;
+      min-height: 45px;
+    }
+
+    .token-box {
+      margin-top: 15px;
+      background: #f1f5f9;
+      padding: 10px;
+      border-radius: 10px;
+      word-wrap: break-word;
+      font-size: 12px;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+
+    <div class="logo">
+      RBI Ledger
+    </div>
+
+    <div class="nav-links">
+      <button onclick="showPage('websocketPage')">Connect</button>
+      <button onclick="showPage('signupPage')">Signup</button>
+      <button onclick="showPage('loginPage')">Login</button>
+      <button onclick="showPage('otpPage')">OTP Verify</button>
+    </div>
+
+  </div>
+
+
+  <div class="hero">
+
+    <h1>Transaction Ledger System</h1>
+
+    <p>
+      Real-Time Banking Authentication using FastAPI,
+      PostgreSQL, Redis and WebSockets
+    </p>
+
+  </div>
+
+
+  <div class="main-container">
+
+    <!-- WEBSOCKET PAGE -->
+
+    <div class="card active" id="websocketPage">
+
+      <h2>Connect WebSocket</h2>
+
+      <input type="email" id="ws_email" placeholder="Enter Email" />
+
+      <button class="submit-btn" onclick="connectWebSocket()">
+        Connect WebSocket
+      </button>
+
+      <div class="message-box" id="ws_message">
+        Waiting for connection...
+      </div>
+
+    </div>
+
+
+    <!-- SIGNUP PAGE -->
+
+    <div class="card" id="signupPage">
+
+      <h2>Create Account</h2>
+
+      <input type="text" id="signup_name" placeholder="Full Name" />
+
+      <input type="email" id="signup_email" placeholder="Email" />
+
+      <input type="password" id="signup_password" placeholder="Password" />
+
+      <input type="text" id="signup_phone" placeholder="Phone Number" />
+
+      <input type="text" id="signup_bank" placeholder="Bank Name" />
+
+      <input type="text" id="signup_aadhaar" placeholder="Aadhaar Number" />
+
+      <input type="text" id="signup_account" placeholder="Account Number" />
+
+      <button class="submit-btn" onclick="signup()">
+        Signup
+      </button>
+
+      <div class="message-box" id="signup_message"></div>
+
+    </div>
+
+
+    <!-- LOGIN PAGE -->
+
+    <div class="card" id="loginPage">
+
+      <h2>Login Account</h2>
+
+      <input type="email" id="login_email" placeholder="Email" />
+
+      <input type="password" id="login_password" placeholder="Password" />
+
+      <button class="submit-btn" onclick="login()">
+        Login
+      </button>
+
+      <div class="message-box" id="login_message"></div>
+
+    </div>
+
+
+    <!-- OTP PAGE -->
+
+    <div class="card" id="otpPage">
+
+      <h2>OTP Verification</h2>
+
+      <input type="email" id="otp_email" placeholder="Email" />
+
+      <input type="text" id="otp_value" placeholder="Enter OTP" />
+
+      <button class="submit-btn" onclick="verifyOTP()">
+        Verify OTP
+      </button>
+
+      <div class="message-box" id="otp_message"></div>
+
+      <div class="token-box" id="token_box"></div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    function showPage(pageId) {
+
+      const pages = document.querySelectorAll('.card')
+
+      pages.forEach(page => {
+        page.classList.remove('active')
+      })
+
+      document.getElementById(pageId).classList.add('active')
+    }
+
+
+    let socket
+
+    function connectWebSocket() {
+
+      const email = document.getElementById('ws_email').value
+
+      socket = new WebSocket(
+        `ws://127.0.0.1:8000/ws/${email}`
+      )
+
+      socket.onopen = function() {
+
+        document.getElementById('ws_message').innerHTML =
+          '<span class="success">WebSocket Connected Successfully</span>'
+      }
+
+      socket.onmessage = function(event) {
+
+        document.getElementById('ws_message').innerText =
+          event.data
+      }
+
+      socket.onclose = function() {
+
+        document.getElementById('ws_message').innerText =
+          'WebSocket Disconnected'
+      }
+    }
+
+
+    async function signup() {
+
+      const data = {
+        name: document.getElementById('signup_name').value,
+        email: document.getElementById('signup_email').value,
+        password: document.getElementById('signup_password').value,
+        phone_no: document.getElementById('signup_phone').value,
+        bank_name: document.getElementById('signup_bank').value,
+        aadhaar_no: document.getElementById('signup_aadhaar').value,
+        account_no: document.getElementById('signup_account').value
+      }
+
+      const response = await fetch(
+        'http://127.0.0.1:8000/auth/signup',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        }
+      )
+
+      const result = await response.json()
+
+      document.getElementById('signup_message').innerText =
+        result.message || result.error || result.detail
+    }
+
+
+    async function login() {
+
+      const data = {
+        email: document.getElementById('login_email').value,
+        password: document.getElementById('login_password').value
+      }
+
+      const response = await fetch(
+        'http://127.0.0.1:8000/auth/login',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        }
+      )
+
+      const result = await response.json()
+
+      document.getElementById('login_message').innerText =
+        result.message || result.error || result.detail
+    }
+
+
+    async function verifyOTP() {
+
+      const data = {
+        email: document.getElementById('otp_email').value,
+        otp: document.getElementById('otp_value').value
+      }
+
+      const response = await fetch(
+        'http://127.0.0.1:8000/auth/verify-otp',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        }
+      )
+
+      const result = await response.json()
+
+      document.getElementById('otp_message').innerText =
+       result.message || result.error || result.detail
+
+      if(result.token) {
+
+        document.getElementById('token_box').innerText =
+          result.token
+      }
+    }
+
+  </script>
+
+</body>
+</html>

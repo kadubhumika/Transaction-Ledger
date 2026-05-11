@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:15
+    container_name: rbi_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2468
+      POSTGRES_DB: rbi_db
+    ports:
+      - "5434:5432"
+  redis:
+    image: redis:latest
+    container_name: rbi_redis
+    ports:
+      - "6380:6379"

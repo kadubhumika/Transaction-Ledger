@@ -6,6 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.database import Base, engine
 from backend.routes import router
 from backend.websocket_manager import manager
+from backend.transaction_routes import router as txn_router
+from backend.search_routes import router as search_router
+
+from backend.profile_routes import router as profile_router
 
 
 # create postgres tables
@@ -33,6 +37,11 @@ app.add_middleware(
 
 app.include_router(router)
 
+app.include_router(txn_router)
+app.include_router(search_router)
+
+app.include_router(profile_router)
+
 
 # websocket route
 
@@ -54,3 +63,4 @@ async def websocket_endpoint(
     except:
 
         manager.disconnect(email)
+

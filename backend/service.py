@@ -10,6 +10,7 @@ from backend.core import (
 from backend.redis_client import redis_client
 from backend.email_service import send_email_otp
 from backend.websocket_manager import manager
+from fastapi import HTTPException
 
 validator = SignupValidator()
 
@@ -34,12 +35,25 @@ class AuthService:
             bank_name=data.bank_name
         )
 
-        db.add(user)
-        db.commit()
+        try:
 
-        return {
-            "message": "Signup successful"
-        }
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+
+            return {
+                "message": "Signup successful"
+            }
+
+        except Exception as e:
+
+            db.rollback()
+
+            print("SIGNUP ERROR:", e)
+
+            return {
+                "error": str(e)
+            }
 
     def login(self, data, db: Session):
 
@@ -48,13 +62,19 @@ class AuthService:
         ).first()
 
         if not user:
-            return {"error": "User not found"}
+            raise HTTPException(
+                status_code=404,
+                detail="User not found"
+            )
 
         if not verify_password(
-            data.password,
-            user.password
+                data.password,
+                user.password
         ):
-            return {"error": "Incorrect password"}
+            raise HTTPException(
+                status_code=401,
+                detail="Incorrect password"
+            )
 
         otp = generate_otp()
 
@@ -77,19 +97,34 @@ class AuthService:
             f"otp:{data.email}"
         )
 
+        if not saved_otp:
+            return {"error": "OTP expired"}
+
+        # handle bytes/string both
+        if isinstance(saved_otp, bytes):
+            saved_otp = saved_otp.decode()
+
         if saved_otp != data.otp:
-            return {"error": "Invalid OTP"}
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid OTP"
+            )
 
         user = db.query(User).filter(
             User.email == data.email
         ).first()
+
+        if not user:
+            raise HTTPException(
+                status_code=404,
+                detail="User not found"
+            )
 
         user.is_verified = True
 
         db.commit()
 
         token = create_jwt(user.email)
-
 
         await manager.send_message(
             user.email,

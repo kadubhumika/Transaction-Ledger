@@ -4,12 +4,13 @@ from fastapi import WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.database import Base, engine
-from backend.routes import router
+
 from backend.websocket_manager import manager
 from backend.transaction_routes import router as txn_router
 from backend.search_routes import router as search_router
 
 from backend.profile_routes import router as profile_router
+from backend.routes import auth_router
 
 
 # create postgres tables
@@ -35,7 +36,7 @@ app.add_middleware(
 
 # api routes
 
-app.include_router(router)
+app.include_router(auth_router)
 
 app.include_router(txn_router)
 app.include_router(search_router)

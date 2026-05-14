@@ -1,401 +1,1733 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RBI Ledger</title>
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0"/>
+
+  <title>Transaction Ledger</title>
+
+  <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+  <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
   <style>
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Poppins',sans-serif;
     }
 
-    body {
-      background: linear-gradient(to right, #1e3a8a, #2563eb);
-      min-height: 100vh;
-      color: white;
+    body{
+      min-height:100vh;
+
+      background:
+      linear-gradient(
+        135deg,
+        #6a11cb 0%,
+        #2575fc 45%,
+        #ff4ecd 100%
+      );
+
+      overflow-x:hidden;
+      color:white;
     }
 
-    .navbar {
-      width: 100%;
-      padding: 20px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(8px);
+    .dark-mode{
+      background:#0f172a;
     }
 
-    .logo {
-      font-size: 28px;
-      font-weight: bold;
+    .hero{
+      width:100%;
+      text-align:center;
+      padding:50px 20px 20px;
     }
 
-    .nav-links {
-      display: flex;
-      gap: 20px;
+    .hero h1{
+      font-size:58px;
+      font-weight:700;
+      margin-bottom:15px;
+
+      text-shadow:
+      0 5px 20px rgba(0,0,0,0.3);
     }
 
-    .nav-links button {
-      padding: 10px 18px;
-      border: none;
-      border-radius: 8px;
-      background: white;
-      color: #2563eb;
-      cursor: pointer;
-      font-weight: bold;
+    .hero p{
+      font-size:18px;
+      opacity:0.9;
     }
 
-    .hero {
-      text-align: center;
-      padding: 80px 20px 40px;
+    .main-container{
+      width:100%;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      padding:30px;
     }
 
-    .hero h1 {
-      font-size: 52px;
-      margin-bottom: 20px;
+    .card{
+      width:470px;
+
+      background:
+      rgba(255,255,255,0.12);
+
+      backdrop-filter:blur(20px);
+
+      border:
+      1px solid rgba(255,255,255,0.15);
+
+      border-radius:28px;
+
+      padding:32px;
+
+      box-shadow:
+      0 10px 40px rgba(0,0,0,0.25);
+
+      display:none;
+
+      animation:fadeIn 0.5s ease;
     }
 
-    .hero p {
-      font-size: 20px;
-      opacity: 0.9;
+    .active{
+      display:block;
     }
 
-    .main-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 40px;
+    @keyframes fadeIn{
+
+      from{
+        opacity:0;
+        transform:translateY(20px);
+      }
+
+      to{
+        opacity:1;
+        transform:translateY(0px);
+      }
     }
 
-    .card {
-      width: 450px;
-      background: white;
-      color: black;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      display: none;
+    h2{
+      text-align:center;
+      margin-bottom:25px;
+      font-size:30px;
+      font-weight:700;
     }
 
-    .active {
-      display: block;
+    input{
+      width:100%;
+      padding:16px;
+      margin-top:14px;
+      border:none;
+      border-radius:16px;
+      outline:none;
+      font-size:15px;
+
+      background:
+      rgba(255,255,255,0.15);
+
+      color:white;
     }
 
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #1e3a8a;
+    input::placeholder{
+      color:rgba(255,255,255,0.7);
     }
 
-    input {
-      width: 100%;
-      padding: 14px;
-      margin-top: 12px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      outline: none;
-      font-size: 14px;
+    .submit-btn{
+      width:100%;
+      padding:15px;
+      margin-top:20px;
+      border:none;
+      border-radius:16px;
+
+      background:
+      linear-gradient(
+        to right,
+        #ff4ecd,
+        #7b61ff
+      );
+
+      color:white;
+
+      font-size:16px;
+      font-weight:600;
+
+      cursor:pointer;
+      transition:0.3s;
     }
 
-    .submit-btn {
-      width: 100%;
-      padding: 14px;
-      margin-top: 18px;
-      border: none;
-      border-radius: 10px;
-      background: #2563eb;
-      color: white;
-      font-size: 15px;
-      cursor: pointer;
-      transition: 0.3s;
+    .submit-btn:hover{
+      transform:translateY(-3px);
+
+      box-shadow:
+      0 10px 25px rgba(255,78,205,0.4);
     }
 
-    .submit-btn:hover {
-      background: #1d4ed8;
+    .message-box{
+      margin-top:18px;
+      padding:14px;
+      border-radius:14px;
+
+      background:
+      rgba(255,255,255,0.1);
+
+      min-height:50px;
+      color:white;
     }
 
-    .message-box {
-      margin-top: 16px;
-      padding: 12px;
-      background: #eff6ff;
-      border-radius: 10px;
-      color: #1e3a8a;
-      min-height: 45px;
+    .token-box{
+      margin-top:15px;
+      padding:14px;
+      border-radius:14px;
+
+      background:
+      rgba(255,255,255,0.1);
+
+      word-wrap:break-word;
+      font-size:12px;
     }
 
-    .token-box {
-      margin-top: 15px;
-      background: #f1f5f9;
-      padding: 10px;
-      border-radius: 10px;
-      word-wrap: break-word;
-      font-size: 12px;
+    .success{
+      color:#6dff8b;
+      font-weight:bold;
     }
 
-    .success {
-      color: green;
-      font-weight: bold;
+    .nav-link{
+      margin-top:15px;
+      text-align:center;
+      cursor:pointer;
+      opacity:0.8;
+    }
+
+    .nav-link:hover{
+      opacity:1;
+    }
+
+    .dashboard{
+      width:100%;
+      max-width:1400px;
+      display:none;
+    }
+
+    .dashboard.active{
+      display:block;
+    }
+
+    .dashboard-layout{
+      display:flex;
+      gap:25px;
+    }
+
+    .sidebar{
+      width:250px;
+
+      min-height:90vh;
+
+      padding:25px;
+
+      border-radius:24px;
+
+      background:
+      rgba(255,255,255,0.12);
+
+      backdrop-filter:blur(20px);
+
+      display:flex;
+      flex-direction:column;
+      gap:15px;
+    }
+
+    .sidebar-logo{
+      font-size:28px;
+      font-weight:700;
+
+      margin-bottom:20px;
+
+      text-align:center;
+    }
+
+    .sidebar button{
+      padding:15px;
+
+      border:none;
+
+      border-radius:16px;
+
+      background:
+      rgba(255,255,255,0.1);
+
+      color:white;
+
+      cursor:pointer;
+
+      transition:0.3s;
+
+      font-size:15px;
+    }
+
+    .sidebar button:hover{
+
+      background:
+      linear-gradient(
+        to right,
+        #ff4ecd,
+        #7b61ff
+      );
+    }
+
+    .main-dashboard{
+      flex:1;
+    }
+
+    .dashboard-section{
+      display:none;
+    }
+
+    .active-section{
+      display:block;
+    }
+
+    .top-profile{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:20px;
+
+      padding:25px;
+
+      border-radius:24px;
+
+      background:
+      rgba(255,255,255,0.12);
+
+      backdrop-filter:blur(20px);
+
+      margin-bottom:25px;
+    }
+
+    .profile-left{
+      display:flex;
+      align-items:center;
+      gap:18px;
+    }
+
+    .avatar{
+      width:70px;
+      height:70px;
+
+      border-radius:50%;
+
+      display:flex;
+      justify-content:center;
+      align-items:center;
+
+      font-size:28px;
+      font-weight:bold;
+
+      background:
+      linear-gradient(
+        to right,
+        #ff4ecd,
+        #7b61ff
+      );
+    }
+
+    .balance-box h3{
+      font-size:18px;
+      opacity:0.8;
+    }
+
+    .balance-box h1{
+      font-size:40px;
+    }
+
+    .search-box{
+      margin:25px 0;
+    }
+
+    .user-list{
+      display:grid;
+
+      grid-template-columns:
+      repeat(auto-fit,minmax(280px,1fr));
+
+      gap:20px;
+    }
+
+    .user-card{
+      background:
+      rgba(255,255,255,0.12);
+
+      backdrop-filter:blur(20px);
+
+      border-radius:24px;
+
+      padding:22px;
+
+      transition:0.3s;
+    }
+
+    .user-card:hover{
+      transform:translateY(-5px);
+
+      box-shadow:
+      0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .user-card h3{
+      margin-bottom:8px;
+    }
+
+    .user-card p{
+      margin-bottom:10px;
+      opacity:0.9;
+    }
+
+    .send-btn{
+      width:100%;
+      padding:12px;
+
+      border:none;
+      border-radius:14px;
+
+      cursor:pointer;
+
+      color:white;
+      font-weight:600;
+
+      background:
+      linear-gradient(
+        to right,
+        #00c6ff,
+        #0072ff
+      );
+    }
+
+    .txn-card{
+      background:
+      rgba(255,255,255,0.12);
+
+      padding:20px;
+
+      border-radius:20px;
+
+      margin-bottom:15px;
+    }
+
+    .notification-card{
+      background:
+      rgba(255,255,255,0.12);
+
+      padding:18px;
+
+      border-radius:18px;
+
+      margin-bottom:15px;
+    }
+
+    .profile-card{
+      background:
+      rgba(255,255,255,0.12);
+
+      padding:25px;
+
+      border-radius:20px;
+    }
+
+    .profile-card p{
+      margin-bottom:15px;
+    }
+
+    .modal{
+      position:fixed;
+
+      top:0;
+      left:0;
+
+      width:100%;
+      height:100%;
+
+      display:none;
+
+      justify-content:center;
+      align-items:center;
+
+      background:
+      rgba(0,0,0,0.5);
+
+      z-index:999;
+    }
+
+    .modal-content{
+      width:400px;
+
+      padding:30px;
+
+      border-radius:24px;
+
+      background:
+      rgba(255,255,255,0.12);
+
+      backdrop-filter:blur(20px);
+    }
+    transactionSection > div{
+  grid-template-columns:1fr !important;
+}
+
+    @media(max-width:900px){
+
+      .dashboard-layout{
+        flex-direction:column;
+      }
+
+      .sidebar{
+        width:100%;
+        min-height:auto;
+      }
     }
 
   </style>
+
 </head>
+
 <body>
 
-  <div class="navbar">
+<div class="hero">
 
-    <div class="logo">
-      RBI Ledger
-    </div>
+  <h1>RBI Ledger</h1>
 
-    <div class="nav-links">
-      <button onclick="showPage('websocketPage')">Connect</button>
-      <button onclick="showPage('signupPage')">Signup</button>
-      <button onclick="showPage('loginPage')">Login</button>
-      <button onclick="showPage('otpPage')">OTP Verify</button>
+  <p>
+    Real-Time Banking System using
+    FastAPI + PostgreSQL + Redis + WebSockets
+  </p>
+
+</div>
+
+<div class="main-container">
+
+  <!-- WEBSOCKET -->
+
+  <div class="card active"
+       id="websocketPage">
+
+    <h2>Connect WebSocket</h2>
+
+    <input type="email"
+           id="ws_email"
+           placeholder="Enter Email" />
+
+    <button class="submit-btn"
+            onclick="connectWebSocket()">
+
+      Connect
+
+    </button>
+
+    <div class="message-box"
+         id="ws_message">
+
+      Waiting for connection...
+
     </div>
 
   </div>
 
+  <!-- SIGNUP -->
 
-  <div class="hero">
+  <div class="card"
+       id="signupPage">
 
-    <h1>Transaction Ledger System</h1>
+    <h2>Create Account</h2>
 
-    <p>
-      Real-Time Banking Authentication using FastAPI,
-      PostgreSQL, Redis and WebSockets
+    <input type="text"
+           id="signup_name"
+           placeholder="Full Name"/>
+
+    <input type="email"
+           id="signup_email"
+           placeholder="Email"/>
+
+    <input type="password"
+           id="signup_password"
+           placeholder="Password"/>
+
+    <input type="text"
+           id="signup_phone"
+           placeholder="Phone Number"/>
+
+    <input type="text"
+           id="signup_bank"
+           placeholder="Bank Name"/>
+
+    <input type="text"
+           id="signup_aadhaar"
+           placeholder="Aadhaar Number"/>
+
+    <input type="text"
+           id="signup_account"
+           placeholder="Account Number"/>
+
+    <button class="submit-btn"
+            onclick="signup()">
+
+      Signup
+
+    </button>
+
+    <div class="message-box"
+         id="signup_message"></div>
+
+    <p class="nav-link"
+       onclick="showPage('loginPage')">
+
+      Already have account? Login
+
     </p>
 
   </div>
 
+  <!-- LOGIN -->
 
-  <div class="main-container">
+  <div class="card"
+       id="loginPage">
 
-    <!-- WEBSOCKET PAGE -->
+    <h2>Login Account</h2>
 
-    <div class="card active" id="websocketPage">
+    <input type="email"
+           id="login_email"
+           placeholder="Email"/>
 
-      <h2>Connect WebSocket</h2>
+    <input type="password"
+           id="login_password"
+           placeholder="Password"/>
 
-      <input type="email" id="ws_email" placeholder="Enter Email" />
+    <button class="submit-btn"
+            onclick="login()">
 
-      <button class="submit-btn" onclick="connectWebSocket()">
-        Connect WebSocket
-      </button>
+      Login
 
-      <div class="message-box" id="ws_message">
-        Waiting for connection...
+    </button>
+
+    <div class="message-box"
+         id="login_message"></div>
+
+    <p class="nav-link"
+       onclick="showPage('signupPage')">
+
+      New User? Signup
+
+    </p>
+
+  </div>
+
+  <!-- OTP -->
+
+  <div class="card"
+       id="otpPage">
+
+    <h2>OTP Verification</h2>
+
+    <input type="email"
+           id="otp_email"
+           placeholder="Email"/>
+
+    <input type="text"
+           id="otp_value"
+           placeholder="Enter OTP"/>
+
+    <button class="submit-btn"
+            onclick="verifyOTP()">
+
+      Verify OTP
+
+    </button>
+
+    <div class="message-box"
+         id="otp_message"></div>
+
+    <div class="token-box"
+         id="token_box"></div>
+
+  </div>
+
+  <!-- DASHBOARD -->
+
+  <div class="dashboard"
+       id="dashboardPage">
+
+    <div class="dashboard-layout">
+
+      <div class="sidebar">
+
+        <div class="sidebar-logo">
+          RBI Ledger
+        </div>
+
+        <button onclick="showSection('homeSection')">
+          🏠 Home
+        </button>
+
+        <button onclick="showSection('transactionSection')">
+          💸 Transactions
+        </button>
+
+        <button onclick="showSection('notificationSection')">
+          🔔 Notifications
+        </button>
+
+        <button onclick="showSection('profileSection')">
+          👤 Profile
+        </button>
+
+        <button onclick="showSection('settingsSection')">
+          ⚙️ Settings
+        </button>
+
+        <button onclick="logoutUser()">
+          🚪 Logout
+        </button>
+
       </div>
 
+      <div class="main-dashboard">
+
+        <div class="dashboard-section active-section"
+             id="homeSection">
+
+          <div class="top-profile">
+
+            <div class="profile-left">
+
+              <div class="avatar"
+                   id="dashboard_avatar">
+
+                U
+
+              </div>
+
+              <div>
+
+                <h2 id="dashboard_name">
+                  User
+                </h2>
+
+                <p id="dashboard_email">
+                  user@gmail.com
+                </p>
+
+              </div>
+
+            </div>
+
+            <div class="balance-box">
+
+              <h3>Total Balance</h3>
+
+              <h1 id="dashboard_balance">
+                ₹0
+              </h1>
+
+            </div>
+
+          </div>
+
+          <div class="search-box">
+
+            <input type="text"
+                   id="search_input"
+                   placeholder="Search Users..."
+                   onkeyup="searchUsers()" />
+
+          </div>
+
+          <div class="user-list"
+               id="user_list"></div>
+
+        </div>
+
+        <div class="dashboard-section"
+     id="transactionSection">
+
+  <h2>Transaction History</h2>
+
+  <div style="
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  ">
+
+    <div>
+
+      <h3 style="margin-bottom:15px;">
+        Category Wise
+      </h3>
+
+      <div id="category_transaction_list"></div>
+
     </div>
 
+    <div>
 
-    <!-- SIGNUP PAGE -->
+      <h3 style="margin-bottom:15px;">
+        Full Transaction Details
+        </h3>
 
-    <div class="card" id="signupPage">
-
-      <h2>Create Account</h2>
-
-      <input type="text" id="signup_name" placeholder="Full Name" />
-
-      <input type="email" id="signup_email" placeholder="Email" />
-
-      <input type="password" id="signup_password" placeholder="Password" />
-
-      <input type="text" id="signup_phone" placeholder="Phone Number" />
-
-      <input type="text" id="signup_bank" placeholder="Bank Name" />
-
-      <input type="text" id="signup_aadhaar" placeholder="Aadhaar Number" />
-
-      <input type="text" id="signup_account" placeholder="Account Number" />
-
-      <button class="submit-btn" onclick="signup()">
-        Signup
-      </button>
-
-      <div class="message-box" id="signup_message"></div>
-
-    </div>
-
-
-    <!-- LOGIN PAGE -->
-
-    <div class="card" id="loginPage">
-
-      <h2>Login Account</h2>
-
-      <input type="email" id="login_email" placeholder="Email" />
-
-      <input type="password" id="login_password" placeholder="Password" />
-
-      <button class="submit-btn" onclick="login()">
-        Login
-      </button>
-
-      <div class="message-box" id="login_message"></div>
-
-    </div>
-
-
-    <!-- OTP PAGE -->
-
-    <div class="card" id="otpPage">
-
-      <h2>OTP Verification</h2>
-
-      <input type="email" id="otp_email" placeholder="Email" />
-
-      <input type="text" id="otp_value" placeholder="Enter OTP" />
-
-      <button class="submit-btn" onclick="verifyOTP()">
-        Verify OTP
-      </button>
-
-      <div class="message-box" id="otp_message"></div>
-
-      <div class="token-box" id="token_box"></div>
+      <div id="transaction_list"></div>
 
     </div>
 
   </div>
 
+</div>
 
-  <script>
+        <div class="dashboard-section"
+             id="notificationSection">
 
-    function showPage(pageId) {
+          <h2>Notifications</h2>
 
-      const pages = document.querySelectorAll('.card')
+          <div id="notification_list"></div>
 
-      pages.forEach(page => {
-        page.classList.remove('active')
+        </div>
+
+        <div class="dashboard-section"
+     id="profileSection">
+
+  <h2>User Profile</h2>
+
+  <div class="profile-card">
+
+    <div style="
+      display:flex;
+      align-items:center;
+      gap:20px;
+      margin-bottom:25px;
+    ">
+
+      <div class="avatar"
+           id="profile_avatar">
+
+        U
+
+      </div>
+
+      <div>
+
+        <h2 id="profile_name">
+          User Name
+        </h2>
+
+        <p id="profile_email">
+          user@gmail.com
+        </p>
+
+      </div>
+
+    </div>
+
+    <p>
+      <strong>Phone:</strong>
+      <span id="profile_phone"></span>
+    </p>
+
+    <p>
+      <strong>Bank:</strong>
+      <span id="profile_bank"></span>
+    </p>
+
+    <p>
+      <strong>Account:</strong>
+      <span id="profile_account"></span>
+    </p>
+
+    <p>
+      <strong>Balance:</strong>
+      ₹<span id="profile_balance"></span>
+    </p>
+
+  </div>
+
+  <div style="
+    display:flex;
+    gap:20px;
+    margin-top:25px;
+  ">
+
+    <button
+      class="submit-btn"
+      onclick="openEditProfileModal()"
+      style="flex:1;">
+
+      Edit Profile
+
+    </button>
+
+    <button
+      class="send-btn"
+      onclick="openAddBalanceModal()"
+      style="flex:1;">
+
+      Add Balance
+
+    </button>
+
+  </div>
+
+</div>
+
+        <div class="dashboard-section"
+             id="settingsSection">
+
+          <h2>Settings</h2>
+
+          <button class="send-btn"
+                  onclick="toggleDarkMode()">
+
+            Toggle Dark Mode
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="modal"
+     id="sendMoneyModal">
+
+  <div class="modal-content">
+
+    <h2>Send Money</h2>
+
+    <input type="number"
+           id="send_amount"
+           placeholder="Enter Amount" />
+    <input type="text"
+       id="send_category"
+       placeholder="Transaction Category" />
+
+<input type="text"
+       id="send_note"
+       placeholder="Transaction Note" />
+
+    <button class="submit-btn"
+            onclick="confirmSendMoney()">
+
+      Confirm Transfer
+
+    </button>
+
+    <button class="send-btn"
+            onclick="closeModal()">
+
+      Cancel
+
+    </button>
+
+  </div>
+
+</div>
+<!-- EDIT PROFILE MODAL -->
+
+<div class="modal"
+     id="editProfileModal">
+
+  <div class="modal-content">
+
+    <h2>Edit Profile</h2>
+
+    <input type="text"
+           id="edit_name"
+           placeholder="Update Name"/>
+
+    <input type="text"
+           id="edit_phone"
+           placeholder="Update Phone"/>
+
+    <input type="text"
+           id="edit_bank"
+           placeholder="Update Bank"/>
+
+    <button class="submit-btn"
+            onclick="updateProfile()">
+
+      Save Changes
+
+    </button>
+
+    <button class="send-btn"
+            onclick="closeEditProfileModal()">
+
+      Cancel
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ADD BALANCE MODAL -->
+
+<div class="modal"
+     id="addBalanceModal">
+
+  <div class="modal-content">
+
+    <h2>Add Balance</h2>
+
+    <input type="number"
+           id="add_balance_amount"
+           placeholder="Enter Amount"/>
+
+    <button class="submit-btn"
+            onclick="addBalance()">
+
+      Add Amount
+
+    </button>
+
+    <button class="send-btn"
+            onclick="closeAddBalanceModal()">
+
+      Cancel
+
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+let currentEmail = ""
+let socket = null
+let selectedReceiver = ""
+let searchTimeout
+
+function showPage(pageId){
+
+  document
+  .querySelectorAll(".card, .dashboard")
+  .forEach(page => {
+
+    page.classList.remove("active")
+  })
+
+  document
+  .getElementById(pageId)
+  .classList.add("active")
+}
+
+function showSection(sectionId){
+
+  document
+  .querySelectorAll(".dashboard-section")
+  .forEach(section => {
+
+    section.classList.remove("active-section")
+  })
+
+  document
+  .getElementById(sectionId)
+  .classList.add("active-section")
+}
+
+function connectWebSocket(){
+
+  const email =
+  document.getElementById("ws_email").value
+
+  if(!email){
+
+    alert("Enter email")
+    return
+  }
+
+  currentEmail = email
+
+  socket = new WebSocket(
+    `ws://127.0.0.1:8000/ws/${email}`
+  )
+
+  socket.onopen = function(){
+
+    document.getElementById("ws_message").innerHTML =
+    "<span class='success'>WebSocket Connected</span>"
+
+    setTimeout(() => {
+
+      showPage("loginPage")
+
+    }, 1500)
+  }
+
+  if(socket){
+
+    socket.onmessage = function(event){
+
+      addNotification(event.data)
+
+      alert(event.data)
+    }
+  }
+
+  socket.onclose = function(){
+
+    document.getElementById("ws_message").innerText =
+    "Disconnected"
+  }
+}
+function openEditProfileModal(){
+
+  document.getElementById(
+    "editProfileModal"
+  ).style.display = "flex"
+}
+
+function closeEditProfileModal(){
+
+  document.getElementById(
+    "editProfileModal"
+  ).style.display = "none"
+}
+
+function openAddBalanceModal(){
+
+  document.getElementById(
+    "addBalanceModal"
+  ).style.display = "flex"
+}
+
+function closeAddBalanceModal(){
+
+  document.getElementById(
+    "addBalanceModal"
+  ).style.display = "none"
+}
+async function updateProfile(){
+
+  const email =
+  localStorage.getItem("email")
+
+  const response = await fetch(
+    `http://127.0.0.1:8000/profile/${email}`,
+    {
+      method:"PUT",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        name:
+        document.getElementById("edit_name").value,
+
+        phone_no:
+        document.getElementById("edit_phone").value,
+
+        bank_name:
+        document.getElementById("edit_bank").value
+      })
+    }
+  )
+
+  const result = await response.json()
+
+ alert(result.message)
+
+closeEditProfileModal()
+
+loadDashboard(email)
+
+  loadDashboard(email)
+}
+async function addBalance(){
+
+  const email =
+  localStorage.getItem("email")
+
+  const amount =
+  document.getElementById(
+    "add_balance_amount"
+  ).value
+
+  const response = await fetch(
+    "http://127.0.0.1:8000/add-balance",
+    {
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        email:email,
+
+        amount:Number(amount)
+      })
+    }
+  )
+
+  const result = await response.json()
+
+  alert(result.message)
+    closeAddBalanceModal()
+
+  loadDashboard(email)
+}
+async function loadTransactions(){
+
+  const email =
+  localStorage.getItem("email")
+
+  const response = await fetch(
+    `http://127.0.0.1:8000/history/${email}`
+  )
+
+  const transactions =
+  await response.json()
+
+  let html = ""
+
+  let categoryHtml = ""
+
+  transactions.forEach(txn => {
+
+    html += `
+
+    <div class="txn-card">
+
+      <h3>
+            <h3>
+₹${txn.amount}
+</h3>
+
+<p>
+<b>From:</b>
+${txn.sender_email}
+</p>
+
+<p>
+<b>To:</b>
+${txn.receiver_email}
+</p>
+
+<p>
+<b>Category:</b>
+${txn.category}
+</p>
+
+<p>
+<b>Note:</b>
+${txn.note}
+</p>
+<p>
+<b>Status:</b>
+${txn.status}
+</p>
+
+    </div>
+    `
+
+    categoryHtml += `
+
+    <div class="txn-card">
+
+      <h3>
+        ${txn.category}
+      </h3>
+
+      <p>
+        ₹${txn.amount}
+      </p>
+
+      <p>
+        ${txn.note}
+      </p>
+
+    </div>
+    `
+  })
+
+  document.getElementById(
+    "transaction_list"
+  ).innerHTML = html
+
+  document.getElementById(
+    "category_transaction_list"
+  ).innerHTML = categoryHtml
+}
+
+async function signup(){
+
+  try{
+
+    const data = {
+
+      name:
+      document.getElementById("signup_name").value,
+
+      email:
+      document.getElementById("signup_email").value,
+
+      password:
+      document.getElementById("signup_password").value,
+
+      phone_no:
+      document.getElementById("signup_phone").value,
+
+      bank_name:
+      document.getElementById("signup_bank").value,
+
+      aadhaar_no:
+      document.getElementById("signup_aadhaar").value,
+
+      account_no:
+      document.getElementById("signup_account").value
+    }
+
+    const response = await fetch(
+      "http://127.0.0.1:8000/auth/signup",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(data)
+      }
+    )
+
+    const result = await response.json()
+
+    document.getElementById("signup_message").innerText =
+    result.message || result.error || "Signup failed"
+
+    if(response.ok){
+
+      localStorage.setItem(
+        "email",
+        data.email
+      )
+
+      setTimeout(() => {
+
+        showPage("loginPage")
+
+      }, 1500)
+    }
+
+  }catch(error){
+
+    alert("Backend server not running")
+  }
+}
+
+async function login(){
+
+  try{
+
+    const data = {
+
+      email:
+      document.getElementById("login_email").value,
+
+      password:
+      document.getElementById("login_password").value
+    }
+
+    const response = await fetch(
+      "http://127.0.0.1:8000/auth/login",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(data)
+      }
+    )
+
+    const result = await response.json()
+
+    document.getElementById("login_message").innerText =
+    result.message || result.error || "Login failed"
+
+    if(response.ok){
+
+      currentEmail = data.email
+
+      localStorage.setItem(
+        "email",
+        currentEmail
+      )
+
+      document.getElementById("otp_email").value =
+      currentEmail
+
+      setTimeout(() => {
+
+        showPage("otpPage")
+
+      }, 1500)
+    }
+
+  }catch(error){
+
+    alert("Backend server not running")
+  }
+}
+
+async function verifyOTP(){
+
+  try{
+
+    const data = {
+
+      email:
+      document.getElementById("otp_email").value,
+
+      otp:
+      document.getElementById("otp_value").value
+    }
+
+    const response = await fetch(
+      "http://127.0.0.1:8000/auth/verify-otp",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(data)
+      }
+    )
+
+    const result = await response.json()
+
+    document.getElementById("otp_message").innerText =
+    result.message || result.error || "Invalid OTP"
+
+    if(result.token){
+
+      localStorage.setItem(
+        "token",
+        result.token
+      )
+
+      document.getElementById("token_box").innerText =
+      result.token
+
+      await loadDashboard(data.email)
+      await loadTransactions()
+      await loadAllUsers()
+
+      setTimeout(() => {
+
+        showPage("dashboardPage")
+
+      }, 1500)
+    }
+
+  }catch(error){
+
+    alert("Backend server not running")
+  }
+}
+
+async function loadDashboard(email){
+
+  const response = await fetch(
+    `http://127.0.0.1:8000/profile/${email}`
+  )
+
+  const result = await response.json()
+
+  document.getElementById("dashboard_name").innerText =
+  result.name
+
+  document.getElementById("dashboard_email").innerText =
+  result.email
+
+  document.getElementById("dashboard_balance").innerText =
+  "₹" + result.balance
+
+  document.getElementById("dashboard_avatar").innerText =
+  result.name.charAt(0).toUpperCase()
+
+  document.getElementById("profile_name").innerText =
+  result.name
+
+  document.getElementById("profile_email").innerText =
+  result.email
+
+  document.getElementById("profile_phone").innerText =
+  result.phone_no || "N/A"
+
+  document.getElementById("profile_bank").innerText =
+  result.bank_name || "N/A"
+
+  document.getElementById("profile_account").innerText =
+  result.account_no || "N/A"
+  document.getElementById("profile_balance").innerText =
+result.balance
+
+document.getElementById("profile_avatar").innerText =
+result.name.charAt(0).toUpperCase()
+}
+async function loadAllUsers(){
+
+  try{
+
+    const response = await fetch(
+      "http://127.0.0.1:8000/search/a"
+    )
+
+    const result = await response.json()
+
+    const users = result.users
+
+    let html = ""
+
+    users.forEach(user => {
+
+      if(user.email === localStorage.getItem("email")){
+        return
+      }
+
+      html += `
+
+      <div class="user-card">
+
+        <h3>${user.name}</h3>
+
+        <p>${user.email}</p>
+
+        <p>${user.bank_name}</p>
+
+        <p>₹${user.balance}</p>
+
+        <button
+          class="send-btn"
+          onclick="openSendModal('${user.email}')"
+        >
+          Send Money
+        </button>
+
+      </div>
+      `
+    })
+
+    document.getElementById("user_list").innerHTML =
+    html
+
+  }catch(error){
+
+    console.log(error)
+  }
+}
+
+async function searchUsers(){
+
+  clearTimeout(searchTimeout)
+
+  searchTimeout = setTimeout(async () => {
+
+    try{
+
+      const query =
+      document.getElementById("search_input").value
+
+      if(query.length < 1){
+
+        loadAllUsers()
+        return
+      }
+
+      const response = await fetch(
+        `http://127.0.0.1:8000/search/${query}`
+      )
+      const result = await response.json()
+
+
+
+      const users = result.users
+
+      if(!Array.isArray(users)){
+        return
+      }
+
+      let html = ""
+
+      users.forEach(user => {
+      if(user.email === localStorage.getItem("email")){
+    return
+  }
+
+        html += `
+
+        <div class="user-card">
+
+          <h3>${user.name}</h3>
+
+          <p>${user.email}</p>
+
+          <p>₹${user.balance}</p>
+
+          <button
+            class="send-btn"
+            onclick="openSendModal('${user.email}')"
+          >
+            Send Money
+          </button>
+
+        </div>
+        `
       })
 
-      document.getElementById(pageId).classList.add('active')
+      document.getElementById("user_list").innerHTML =
+      html
+
+    }catch(error){
+
+      console.log(error)
     }
 
+  }, 400)
+}
 
-    let socket
+function openSendModal(receiverEmail){
 
-    function connectWebSocket() {
+  selectedReceiver = receiverEmail
 
-      const email = document.getElementById('ws_email').value
+  document.getElementById("sendMoneyModal").style.display =
+  "flex"
+}
 
-      socket = new WebSocket(
-        `ws://127.0.0.1:8000/ws/${email}`
-      )
+function closeModal(){
 
-      socket.onopen = function() {
+  document.getElementById("sendMoneyModal").style.display =
+  "none"
+}
 
-        document.getElementById('ws_message').innerHTML =
-          '<span class="success">WebSocket Connected Successfully</span>'
-      }
+async function confirmSendMoney(){
 
-      socket.onmessage = function(event) {
+  try{
 
-        document.getElementById('ws_message').innerText =
-          event.data
-      }
+    const amount =
+    document.getElementById("send_amount").value
 
-      socket.onclose = function() {
+    const senderEmail =
+    localStorage.getItem("email")
 
-        document.getElementById('ws_message').innerText =
-          'WebSocket Disconnected'
-      }
+    if(senderEmail === selectedReceiver){
+
+      alert("Cannot send money to yourself")
+      return
     }
 
+    const response = await fetch(
+      "http://127.0.0.1:8000/send-money",
+      {
+        method:"POST",
 
-    async function signup() {
 
-      const data = {
-        name: document.getElementById('signup_name').value,
-        email: document.getElementById('signup_email').value,
-        password: document.getElementById('signup_password').value,
-        phone_no: document.getElementById('signup_phone').value,
-        bank_name: document.getElementById('signup_bank').value,
-        aadhaar_no: document.getElementById('signup_aadhaar').value,
-        account_no: document.getElementById('signup_account').value
+         headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+  sender_email:senderEmail,
+
+  receiver_email:selectedReceiver,
+
+  amount:Number(amount),
+
+  category:
+  document.getElementById("send_category").value,
+
+  note:
+  document.getElementById("send_note").value
+})
       }
+    )
+const result = await response.json()
 
-      const response = await fetch(
-        'http://127.0.0.1:8000/auth/signup',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        }
-      )
+    alert(result.message || result.detail)
 
-      const result = await response.json()
+closeModal()
 
-      document.getElementById('signup_message').innerText =
-        result.message || result.error || result.detail
-    }
+document.getElementById("send_amount").value = ""
 
+document.getElementById("send_category").value = ""
 
-    async function login() {
+document.getElementById("send_note").value = ""
 
-      const data = {
-        email: document.getElementById('login_email').value,
-        password: document.getElementById('login_password').value
-      }
+await loadDashboard(senderEmail)
 
-      const response = await fetch(
-        'http://127.0.0.1:8000/auth/login',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        }
-      )
+await loadTransactions()
 
-      const result = await response.json()
+await loadAllUsers()
 
-      document.getElementById('login_message').innerText =
-        result.message || result.error || result.detail
-    }
+document.getElementById("search_input").value = ""
+
+  }catch(error){
+
+    alert("Transaction failed")
+  }
+}
 
 
-    async function verifyOTP() {
 
-      const data = {
-        email: document.getElementById('otp_email').value,
-        otp: document.getElementById('otp_value').value
-      }
 
-      const response = await fetch(
-        'http://127.0.0.1:8000/auth/verify-otp',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        }
-      )
+function addNotification(message){
 
-      const result = await response.json()
+  const box =
+  document.getElementById("notification_list")
 
-      document.getElementById('otp_message').innerText =
-       result.message || result.error || result.detail
+  box.innerHTML += `
 
-      if(result.token) {
+  <div class="notification-card">
 
-        document.getElementById('token_box').innerText =
-          result.token
-      }
-    }
+    ${message}
 
-  </script>
+  </div>
+  `
+}
+
+function toggleDarkMode(){
+
+  document.body.classList.toggle("dark-mode")
+}
+
+function logoutUser(){
+
+  localStorage.clear()
+
+  location.reload()
+}
+
+</script>
 
 </body>
 </html>

@@ -21,12 +21,13 @@ from backend.data_class import (
 )
 
 
-router = APIRouter()
+
 
 service = AuthService()
+auth_router = APIRouter(prefix="/auth")
 
 
-@router.post("/auth/signup")
+@auth_router.post("/signup")
 def signup(
     data: SignupData,
     db: Session = Depends(get_db)
@@ -35,7 +36,7 @@ def signup(
     return service.signup(data, db)
 
 
-@router.post("/auth/login")
+@auth_router.post("/login")
 def login(
     data: LoginData,
     db: Session = Depends(get_db)
@@ -44,7 +45,7 @@ def login(
     return service.login(data, db)
 
 
-@router.post("/auth/verify-otp")
+@auth_router.post("/verify-otp")
 async def verify_otp(
     data: OTPVerifyData,
     db: Session = Depends(get_db)

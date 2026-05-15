@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from datetime import datetime
 
 
 class SignupData(BaseModel):
@@ -31,6 +32,20 @@ class OTPVerifyData(BaseModel):
     email: EmailStr
 
     otp: str
+
+class ScheduledPaymentCreate(BaseModel):
+
+    sender_email: str
+
+    receiver_email: str
+
+    amount: float
+
+    category: str
+
+    note: str
+
+    scheduled_time: datetime
 
 # dataa_class for GenicAccount(
 # inheristance

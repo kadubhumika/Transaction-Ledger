@@ -6,3 +6,5 @@ redis
 python-jose[cryptography]
 passlib[bcrypt]
 python-dotenv
+reportlab
+apscheduler

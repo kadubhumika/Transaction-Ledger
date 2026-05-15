@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from datetime import datetime
+
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from backend.database import Base
 
 class Transaction(Base):
@@ -10,3 +12,7 @@ class Transaction(Base):
     category = Column(String)
     status = Column(String)
     note = Column(String)
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
+    )

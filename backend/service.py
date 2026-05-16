@@ -126,7 +126,7 @@ class AuthService:
 
         token = create_jwt(user.email)
 
-        await manager.send_message(
+        await manager.send_personal_message(
             user.email,
             "Login successful"
         )

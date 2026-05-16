@@ -1,6 +1,5 @@
 from fastapi import WebSocket
 
-
 class ConnectionManager:
 
     def __init__(self):
@@ -9,34 +8,31 @@ class ConnectionManager:
 
     async def connect(
         self,
-        user_email,
-        websocket: WebSocket
+        email:str,
+        websocket:WebSocket
     ):
 
         await websocket.accept()
 
-        self.active_connections[user_email] = websocket
+        self.active_connections[email] = websocket
 
-    def disconnect(self, user_email):
+    def disconnect(self, email:str):
 
-        self.active_connections.pop(
-            user_email,
-            None
-        )
+        if email in self.active_connections:
 
-    async def send_message(
+            del self.active_connections[email]
+
+    async def send_personal_message(
+
         self,
-        user_email,
-        message
+        email:str,
+        message:str
     ):
 
-        websocket = self.active_connections.get(
-            user_email
-        )
+        websocket = self.active_connections.get(email)
 
         if websocket:
 
             await websocket.send_text(message)
-
 
 manager = ConnectionManager()

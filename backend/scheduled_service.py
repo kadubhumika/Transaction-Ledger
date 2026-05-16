@@ -18,7 +18,8 @@ def create_scheduled_payment(data):
 
         note=data.note,
 
-        scheduled_time=data.scheduled_time
+        scheduled_time=
+        f"{data.scheduled_date} {data.scheduled_time}"
     )
 
     db.add(payment)

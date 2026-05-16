@@ -45,7 +45,9 @@ class ScheduledPaymentCreate(BaseModel):
 
     note: str
 
-    scheduled_time: datetime
+    scheduled_date: str
+
+    scheduled_time: str
 
 # dataa_class for GenicAccount(
 # inheristance

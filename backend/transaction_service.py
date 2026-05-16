@@ -46,21 +46,21 @@ class TransactionService:
             receiver.email,
             receiver.balance
         )
-        await manager.send_message(
+        await manager.send_personal_message(
             sender.email,
             f"₹{data.amount} sent to {receiver.name}"
         )
-        await manager.send_message(
+        await manager.send_personal_message(
             sender.email,
             f"After transaction cuurent balance is {sender.balance}"
         )
 
         # websocket receiver
-        await manager.send_message(
+        await manager.send_personal_message(
             receiver.email,
             f"₹{data.amount} received from {sender.name}"
         )
-        await manager.send_message(
+        await manager.send_personal_messgae(
             receiver.email,
             f"After transaction cuurent balance is{receiver.balance}"
         )

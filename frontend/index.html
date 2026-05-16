@@ -1015,7 +1015,12 @@
        id="send_note"
        placeholder="Transaction Note" />
     <input
-  type="datetime-local"
+  type="date"
+  id="schedule_date"
+/>
+
+<input
+  type="time"
   id="schedule_time"
 />
 
@@ -1164,7 +1169,7 @@ function connectWebSocket(){
   currentEmail = email
 
   socket = new WebSocket(
-    `ws://127.0.0.1:8000/ws/${email}`
+    `ws://127.0.0.1:8085/ws/${email}`
   )
 
   socket.onopen = function(){
@@ -1837,58 +1842,86 @@ async function confirmSendMoney(){
     const senderEmail =
     localStorage.getItem("email")
 
+    const scheduledDate =
+    document.getElementById("schedule_date").value
+
+    const scheduledTime =
+    document.getElementById("schedule_time").value
+
     if(senderEmail === selectedReceiver){
 
       alert("Cannot send money to yourself")
       return
     }
 
+    let endpoint =
+    "http://127.0.0.1:8085/send-money"
+
+    let bodyData = {
+
+      sender_email:senderEmail,
+
+      receiver_email:selectedReceiver,
+
+      amount:Number(amount),
+
+      category:
+      document.getElementById("send_category").value,
+
+      note:
+      document.getElementById("send_note").value
+    }
+
+    if(scheduledDate && scheduledTime){
+
+      endpoint =
+      "http://127.0.0.1:8085/schedule-payment"
+
+      bodyData.scheduled_date =
+      scheduledDate
+
+      bodyData.scheduled_time =
+      scheduledTime
+    }
+
     const response = await fetch(
-      "http://127.0.0.1:8085/send-money",
+      endpoint,
       {
         method:"POST",
 
-
-         headers:{
+        headers:{
           "Content-Type":"application/json"
         },
 
-        body:JSON.stringify({
-
-  sender_email:senderEmail,
-
-  receiver_email:selectedReceiver,
-
-  amount:Number(amount),
-
-  category:
-  document.getElementById("send_category").value,
-
-  note:
-  document.getElementById("send_note").value
-})
+        body:JSON.stringify(bodyData)
       }
     )
-const result = await response.json()
+
+    const result = await response.json()
 
     alert(result.message || result.detail)
 
-closeModal()
+    closeModal()
 
-document.getElementById("send_amount").value = ""
+    document.getElementById("send_amount").value = ""
 
-document.getElementById("send_category").value = ""
+    document.getElementById("send_category").value = ""
 
-document.getElementById("send_note").value = ""
+    document.getElementById("send_note").value = ""
 
-await loadDashboard(senderEmail)
-await loadAnalytics()
+    document.getElementById("schedule_date").value = ""
 
-await loadTransactions()
+    document.getElementById("schedule_time").value = ""
 
-await loadAllUsers()
+    await loadDashboard(senderEmail)
 
-document.getElementById("search_input").value = ""
+    await loadAnalytics()
+
+    await loadTransactions()
+
+    await loadAllUsers()
+
+    document.getElementById("search_input").value = ""
 
   }catch(error){
 

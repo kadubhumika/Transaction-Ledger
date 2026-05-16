@@ -16,72 +16,78 @@ async def execute_scheduled_payments():
 
     db = SessionLocal()
 
-    payments = db.query(
-        ScheduledPayment
-    ).filter(
+    try:
 
-        ScheduledPayment.status == "pending"
+        payments = db.query(
+            ScheduledPayment
+        ).filter(
 
-    ).all()
+            ScheduledPayment.status == "pending"
 
-    for payment in payments:
+        ).all()
 
-        if payment.scheduled_time <= datetime.now():
+        for payment in payments:
 
-            sender = db.query(User).filter(
-                User.email == payment.sender_email
-            ).first()
+            if payment.scheduled_time <= datetime.now():
 
-            receiver = db.query(User).filter(
-                User.email == payment.receiver_email
-            ).first()
+                sender = db.query(User).filter(
+                    User.email == payment.sender_email
+                ).first()
 
-            if sender.balance >= payment.amount:
+                receiver = db.query(User).filter(
+                    User.email == payment.receiver_email
+                ).first()
 
-                sender.balance -= payment.amount
+                if sender.balance >= payment.amount:
 
-                receiver.balance += payment.amount
+                    sender.balance -= payment.amount
 
-                txn = Transaction(
+                    receiver.balance += payment.amount
 
-                    sender_email=payment.sender_email,
+                    txn = Transaction(
 
-                    receiver_email=payment.receiver_email,
+                        sender_email=payment.sender_email,
 
-                    amount=payment.amount,
+                        receiver_email=payment.receiver_email,
 
-                    category=payment.category,
+                        amount=payment.amount,
 
-                    note=payment.note,
+                        category=payment.category,
 
-                    status="scheduled-success"
-                )
+                        note=payment.note,
 
-                db.add(txn)
+                        status="scheduled-success"
+                    )
 
-                payment.status = "completed"
+                    db.add(txn)
 
-                db.commit()
+                    payment.status = "completed"
 
-                await manager.send_personal_message(
+                    db.commit()
 
-                    payment.sender_email,
+                    await manager.send_personal_message(
 
-                    f"Scheduled Payment Sent ₹{payment.amount} to {payment.receiver_email}"
-                )
+                        payment.sender_email,
 
-                await manager.send_personal_message(
+                        f"Scheduled Payment Sent ₹{payment.amount} to {payment.receiver_email}"
+                    )
 
-                    payment.receiver_email,
+                    await manager.send_personal_message(
 
-                    f"Received ₹{payment.amount} from {payment.sender_email}"
-                )
+                        payment.receiver_email,
 
-            else:
+                        f"Received ₹{payment.amount} from {payment.sender_email}"
+                    )
 
-                payment.status = "failed"
+                else:
 
-                db.commit()
+                    payment.status = "failed"
+
+                    db.commit()
+
+    finally:
+
+        db.close()
 
 async def start_scheduler():
 
@@ -95,3 +101,5 @@ async def start_scheduler():
     )
 
     scheduler.start()
+
+    print("Scheduler started successfully!")

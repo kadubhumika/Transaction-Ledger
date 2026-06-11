@@ -9,6 +9,7 @@ from backend.models import User
 from backend.transaction_models import Transaction
 
 from backend.websocket_manager import manager
+from backend.bank_account_models import BankAccount
 
 scheduler = AsyncIOScheduler()
 
@@ -30,13 +31,24 @@ async def execute_scheduled_payments():
 
             if payment.scheduled_time <= datetime.now():
 
-                sender = db.query(User).filter(
-                    User.email == payment.sender_email
+
+
+                sender = db.query(BankAccount).filter(
+                    BankAccount.user_email == payment.sender_email,
+                    BankAccount.is_active == True
                 ).first()
 
-                receiver = db.query(User).filter(
-                    User.email == payment.receiver_email
+                receiver = db.query(BankAccount).filter(
+                    BankAccount.user_email == payment.receiver_email,
+                    BankAccount.is_active == True
                 ).first()
+
+                if not sender or not receiver:
+                    payment.status = "failed"
+
+                    db.commit()
+
+                    continue
 
                 if sender.balance >= payment.amount:
 
@@ -45,18 +57,14 @@ async def execute_scheduled_payments():
                     receiver.balance += payment.amount
 
                     txn = Transaction(
-
                         sender_email=payment.sender_email,
-
                         receiver_email=payment.receiver_email,
-
+                        sender_account_no=sender.account_no,  # <-- Added missing column mapping
+                        receiver_account_no=receiver.account_no,  # <-- Added missing column mapping
                         amount=payment.amount,
-
                         category=payment.category,
-
                         note=payment.note,
-
-                        status="scheduled-success"
+                        status="Sucessfull Transaction"
                     )
 
                     db.add(txn)

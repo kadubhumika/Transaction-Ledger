@@ -4,14 +4,22 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from backend.database import Base
 
 class Transaction(Base):
-    __tablename__ = 'transactions'
-    id = Column(Integer, primary_key=True,index=True,autoincrement=True)
+    __tablename__ = "transactions"
+
+    id = Column(Integer, primary_key=True)
+
     sender_email = Column(String)
     receiver_email = Column(String)
+
+    sender_account_no = Column(String)
+    receiver_account_no = Column(String)
+
     amount = Column(Integer)
+
     category = Column(String)
     status = Column(String)
     note = Column(String)
+
     created_at = Column(
         DateTime,
         default=datetime.utcnow

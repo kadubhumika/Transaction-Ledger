@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+
+from backend.bank_account_models import BankAccount
 from backend.models import User
 from backend.auth import SignupValidator
 from backend.core import (
@@ -30,30 +32,33 @@ class AuthService:
             email=data.email,
             password=hashed_password,
             phone_no=data.phone_no,
-            aadhaar_no=data.aadhaar_no,
-            account_no=data.account_no,
-            bank_name=data.bank_name
+            aadhaar_no=data.aadhaar_no
         )
 
         try:
 
+
             db.add(user)
+
+            account = BankAccount(
+                user_email=data.email,
+                bank_name=data.bank_name,
+                account_no=data.account_no,
+                balance=0,
+                is_active=True
+            )
+
+            db.add(account)
+
             db.commit()
             db.refresh(user)
 
-            return {
-                "message": "Signup successful"
-            }
+            return {"message": "Signup successful"}
 
         except Exception as e:
-
             db.rollback()
-
             print("SIGNUP ERROR:", e)
-
-            return {
-                "error": str(e)
-            }
+            return {"error": str(e)}
 
     def login(self, data, db: Session):
 

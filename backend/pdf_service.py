@@ -7,6 +7,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from backend.database import SessionLocal
 from backend.models import User
 from backend.transaction_models import  Transaction
+from backend.bank_account_models import BankAccount
 
 def generate_pdf_statement(email):
 
@@ -16,9 +17,29 @@ def generate_pdf_statement(email):
         User.email == email
     ).first()
 
-    transactions = db.query(Transaction).filter(
-        (Transaction.sender_email == email) |
-        (Transaction.receiver_email == email)
+
+
+    active_account = db.query(
+        BankAccount
+    ).filter(
+        BankAccount.user_email == email,
+        BankAccount.is_active == True
+    ).first()
+
+    if not active_account:
+        return None
+
+    transactions = db.query(
+        Transaction
+    ).filter(
+        (
+                Transaction.sender_account_no ==
+                active_account.account_no
+        ) |
+        (
+                Transaction.receiver_account_no ==
+                active_account.account_no
+        )
     ).all()
 
     filename = f"{email}_statement.pdf"
@@ -43,11 +64,9 @@ def generate_pdf_statement(email):
         Paragraph(f"Email: {user.email}", styles['BodyText'])
     )
 
-    elements.append(
-        Paragraph(
-            f"Account No: {user.account_no}",
-            styles['BodyText']
-        )
+    Paragraph(
+        f"Account No: {active_account.account_no}",
+        styles['BodyText']
     )
 
     elements.append(Spacer(1, 20))

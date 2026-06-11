@@ -3,6 +3,7 @@ from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from backend.database import Base, engine
 from backend.websocket_manager import manager
+from backend.bank_account_routes import router as bank_router
 
 # Import routers safely
 from backend.routes import auth_router
@@ -44,6 +45,8 @@ app.include_router(search_router)
 app.include_router(profile_router)
 app.include_router(analytics_router)
 app.include_router(pdf_router)
+
+app.include_router(bank_router)
 
 # WebSocket Endpoint Handler
 @app.websocket("/ws/{email}")

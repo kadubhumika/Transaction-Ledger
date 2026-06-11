@@ -1,17 +1,7 @@
-# now iin nrouyres ist comes alll logic ccalling via endpoints for evry faeture work task all
-# routes for all authtication part signup , otp send , save , login all flow
-# routes for transcation part liek send money , money recaieved all ceck bakacned , check history , and as we willl add serch by nmae to pay money if user serch
-# Ra so ut should show rahul sharmand by clickingiyt should send moeyy
-# soo for now we wull add stimulated csv file for db user basically user (info- name, email , password , phoeno, addhar_no)
-# sio that it will besscy for project
-# recipt suuceful recipt api
-
 from fastapi import APIRouter, Depends
-
 from sqlalchemy.orm import Session
 
 from backend.database import get_db
-
 from backend.service import AuthService
 
 from backend.data_class import (
@@ -20,35 +10,23 @@ from backend.data_class import (
     OTPVerifyData
 )
 
-
-
-
 service = AuthService()
 auth_router = APIRouter(prefix="/auth")
 
 
+# ✅ SIGNUP
 @auth_router.post("/signup")
-def signup(
-    data: SignupData,
-    db: Session = Depends(get_db)
-):
-
+def signup(data: SignupData, db: Session = Depends(get_db)):
     return service.signup(data, db)
 
 
+# ✅ LOGIN (FIXED)
 @auth_router.post("/login")
-def login(
-    data: LoginData,
-    db: Session = Depends(get_db)
-):
-
+def login(data: LoginData, db: Session = Depends(get_db)):
     return service.login(data, db)
 
 
+# ✅ OTP VERIFY
 @auth_router.post("/verify-otp")
-async def verify_otp(
-    data: OTPVerifyData,
-    db: Session = Depends(get_db)
-):
-
+async def verify_otp(data: OTPVerifyData, db: Session = Depends(get_db)):
     return await service.verify_otp(data, db)

@@ -20,11 +20,7 @@ class User(Base):
 
     aadhaar_no = Column(String)
 
-    bank_name = Column(String)
 
-    account_no = Column(String,unique=True)
-
-    balance = Column(Integer, default=10000)
 
     is_verified = Column(Boolean, default=False)
 

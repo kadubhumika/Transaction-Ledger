@@ -1,4 +1,3 @@
-# main.py
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from backend.database import Base, engine
@@ -21,7 +20,6 @@ from backend.scheduler_engine import start_scheduler
 
 # Initialize FastAPI App
 app = FastAPI()
-app.include_router(scheduled_router)
 
 # Move tables creation inside startup event to prevent premature process termination
 @app.on_event("startup")
@@ -41,14 +39,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API Endpoint Routing
+# ✅ SAFEST FIX: Explicitly load the auth_router directly first
 app.include_router(auth_router)
+
+# API Endpoint Routing
+app.include_router(scheduled_router)
 app.include_router(txn_router)
 app.include_router(search_router)
 app.include_router(profile_router)
 app.include_router(analytics_router)
 app.include_router(pdf_router)
-
 app.include_router(bank_router)
 
 # WebSocket Endpoint Handler

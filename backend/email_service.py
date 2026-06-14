@@ -7,7 +7,7 @@ def send_email_otp(email: str, otp: str) -> bool:
     Bypasses port blocking restrictions on cloud platforms like Render.
     """
     # ✅ FIX 1: Correct Brevo Transactional Email Endpoint
-    url = "https://brevo.com"
+    url ="https://api.brevo.com/v3/smtp/email"
 
     api_key = os.getenv("SMTP_PASSWORD")
 

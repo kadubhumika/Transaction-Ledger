@@ -1,43 +1,58 @@
 import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import requests
 
 
 def send_email_otp(email: str, otp: str) -> bool:
     """
-    Sends a real automated login OTP via the standard smtplib module using Brevo SMTP.
+    Sends a real automated login OTP via Brevo's Web HTTP API.
+    Bypasses port blocking restrictions on cloud platforms like Render.
     """
-    # Create the email container
-    msg = MIMEMultipart()
-    msg["Subject"] = "RBI Ledger - Your Secure Login OTP"
+    url = "https://brevo.com"
+    api_key = os.getenv("SMTP_PASSWORD")
 
-    # ✅ FIX: Hardcode your real verified sender email here instead of os.getenv("SMTP_USER")
-    msg["From"] = "kadubhumika2468@gmail.com"
-    msg["To"] = email
+    if not api_key:
+        print("❌ Brevo API Error: SMTP_PASSWORD environment variable is missing!")
+        return False
 
-    # Email body content
-    body = f"Your automated login OTP code is {otp}. This code is valid for 5 minutes."
-    msg.attach(MIMEText(body, "plain"))
+    headers = {
+        "accept": "application/json",
+        "api-key": api_key,
+        "content-type": "application/json"
+    }
+
+    payload = {
+        "sender": {
+            "name": "RBI Ledger",
+            "email": "kadubhumika2468@gmail.com"
+        },
+        "to": [
+            {
+                "email": email
+            }
+        ],
+        "subject": "RBI Ledger - Your Secure Login OTP",
+        "htmlContent": f"""
+            <html>
+                <body>
+                    <h2>Secure Authentication Verification</h2>
+                    <p>Your automated login OTP code is <strong>{otp}</strong>.</p>
+                    <p>This code is valid for 5 minutes. Please do not share it with anyone.</p>
+                </body>
+            </html>
+        """
+    }
 
     try:
-        # Establish connection using your .env variables
-        server = smtplib.SMTP(os.getenv("SMTP_SERVER"), int(os.getenv("SMTP_PORT", 587)))
-        server.starttls()  # Secure the connection
+        response = requests.post(url, json=payload, headers=headers)
 
-        # Authenticate using Brevo SMTP account credentials
-        server.login(
-            os.getenv("SMTP_USER"),
-            os.getenv("SMTP_PASSWORD")
-        )
-
-        # Send the payload using the real email address header
-        server.sendmail(msg["From"], email, msg.as_string())
-        server.quit()
-
-        print(f"🚀 Automated OTP sent successfully to {email} via smtplib!")
-        return True
+        # ✅ FIXED: Correct list check syntax for successful API responses
+        if response.status_code in [200, 201, 202]:
+            print(f"🚀 Automated OTP sent successfully to {email} via Brevo Web API!")
+            return True
+        else:
+            print(f"❌ Brevo API Response Error [{response.status_code}]: {response.text}")
+            return False
 
     except Exception as e:
-        print(f"❌ smtplib Automation Error: {str(e)}")
+        print(f"❌ HTTP Email Sync Exception: {str(e)}")
         return False

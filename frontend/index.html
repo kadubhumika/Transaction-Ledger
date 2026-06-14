@@ -1682,13 +1682,21 @@ async function switchAccount(){
   window.location.reload(); // Moved to the very end
 }
 
-
 async function verifyOTP(){
   try {
-    const data = {
-      email: document.getElementById("otp_email").value,
-      otp: document.getElementById("otp_value").value
+    const emailInput = document.getElementById("otp_email").value.trim();
+    const otpInput = document.getElementById("otp_value").value.trim();
+
+    // 🛡️ SECURITY CHECK: Stop the function if fields are empty!
+    if (!emailInput || !otpInput) {
+      document.getElementById("otp_message").innerText = "Please enter both your email and OTP code.";
+      return;
     }
+
+    const data = {
+      email: emailInput,
+      otp: otpInput
+    };
 
     const response = await fetch(`${BASE_URL}/auth/verify-otp`, {
       method: "POST",
@@ -1698,8 +1706,13 @@ async function verifyOTP(){
 
     const result = await response.json();
 
-    document.getElementById("otp_message").innerText =
-      result.message || result.error || "Invalid OTP";
+    // Handle standard HTTP error details from FastAPI
+    if (!response.ok) {
+      document.getElementById("otp_message").innerText = result.detail || result.error || "Verification failed";
+      return;
+    }
+
+    document.getElementById("otp_message").innerText = result.message || "Success!";
 
     if(result.token){
       localStorage.setItem("token", result.token);
@@ -1707,6 +1720,7 @@ async function verifyOTP(){
 
       document.getElementById("token_box").innerText = result.token;
 
+      // Safe backdrop execution loops
       try { await loadDashboard(data.email); } catch(e) {}
       try { await loadAnalytics(); } catch(e) {}
       try { await loadTransactions(); } catch(e) {}
@@ -1722,7 +1736,6 @@ async function verifyOTP(){
     alert("Authentication connection completely failed connecting to server.");
   }
 }
-
 
 async function loadDashboard(email){
 

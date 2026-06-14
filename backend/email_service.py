@@ -12,7 +12,7 @@ def send_email_otp(email: str, otp: str) -> bool:
     api_key = os.getenv("SMTP_PASSWORD")
 
     if not api_key:
-        print("❌ Brevo API Error: SMTP_PASSWORD environment variable is missing!")
+        print(f" Brevo API Error: SMTP_PASSWORD environment variable is missing!")
         return False
 
     headers = {
@@ -49,12 +49,12 @@ def send_email_otp(email: str, otp: str) -> bool:
 
         # ✅ FIX 3: Single curly braces for response data logging
         if response.status_code in [200, 201, 202]:
-            print(f"🚀 Automated OTP sent successfully to {email} via Brevo Web API!")
+            print(f" Automated OTP sent successfully to {email} via Brevo Web API!")
             return True
         else:
-            print(f"❌ Brevo API Response Error [{response.status_code}]: {response.text}")
+            print(f" Brevo API Response Error [{response.status_code}]: {response.text}")
             return False
 
     except Exception as e:
-        print(f"❌ HTTP Email Sync Exception: {str(e)}")
+        print(f" HTTP Email Sync Exception: {str(e)}")
         return False

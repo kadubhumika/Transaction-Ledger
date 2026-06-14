@@ -58,7 +58,7 @@ docker-compose up --build -d
 * Generated downloadable PDF account statements
 * Built analytics APIs for expense tracking and spending insights
 
-  <img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/4c7ad04a-bd13-4598-b88f-dccf1f0376a0" />
+  <img width="700" height="700" alt="image" src="https://github.com/user-attachments/assets/4c7ad04a-bd13-4598-b88f-dccf1f0376a0" />
 
 ## 👩‍💻 Developer
 

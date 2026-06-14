@@ -4,6 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.database import Base, engine
 from backend.websocket_manager import manager
 from backend.bank_account_routes import router as bank_router
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Import routers safely
 from backend.routes import auth_router

@@ -52,3 +52,9 @@ class RedisCache:
             return json.loads(data)
 
         return None
+
+    def delete_cache(self, key):
+        """
+        Deletes a key from the Redis cache instance.
+        """
+        return self.redis_client.delete(key)

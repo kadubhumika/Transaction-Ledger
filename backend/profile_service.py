@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from backend.models import User
 from backend.bank_account_models import BankAccount
+from backend.redis_client import redis_client
 
 
 class ProfileService:
@@ -52,6 +53,10 @@ class ProfileService:
 
         account.balance += amount
         db.commit()
+
+
+        for key in redis_client.scan_iter("search:*"):
+            redis_client.delete(key)
 
         # 🚀 ADD THIS LINE RIGHT HERE TO EVICT CACHE:
         from backend.redis_cache import RedisCache

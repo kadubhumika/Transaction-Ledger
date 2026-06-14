@@ -1577,6 +1577,7 @@ async function schedulePayment(){
     await loadAnalytics();
     await loadTransactions();
     await loadAccounts();
+    await loadAllUsers();
   }
 
   if (typeof addNotification === "function") {

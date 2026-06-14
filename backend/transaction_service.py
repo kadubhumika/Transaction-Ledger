@@ -4,6 +4,7 @@ from backend.transaction_models import Transaction
 from backend.websocket_manager import manager
 from backend.redis_cache import RedisCache
 from backend.fraud_service import FraudService
+from backend.redis_client import redis_client
 
 cache = RedisCache()
 
@@ -72,6 +73,10 @@ class TransactionService:
 
         db.add(txn)
         db.commit()
+
+
+        for key in redis_client.scan_iter("search:*"):
+            redis_client.delete(key)
 
         cache.save_balance(sender.user_email, sender.balance)
         cache.save_balance(receiver.user_email, receiver.balance)

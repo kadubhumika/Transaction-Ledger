@@ -1208,6 +1208,8 @@ let currentEmail = ""
 let socket = null
 let selectedReceiver = ""
 let searchTimeout
+const BASE_URL = "https://transaction-ledger-tumx.onrender.com";
+const WS_BASE_URL = "wss://transaction-ledger-tumx.onrender.com";
 
 function showPage(pageId){
 
@@ -1251,7 +1253,7 @@ function connectWebSocket(){
   currentEmail = email
 
   socket = new WebSocket(
-    `ws://127.0.0.1:8085/ws/${email}`
+    `${WS_BASE_URL}/ws/${email}`
   )
 
   socket.onopen = function(){
@@ -1315,7 +1317,7 @@ async function updateProfile(){
   localStorage.getItem("email")
 
   const response = await fetch(
-    `http://127.0.0.1:8085/profile/${email}`,
+    `${BASE_URL}/profile/${email}`,
     {
       method:"PUT",
 
@@ -1342,7 +1344,7 @@ async function updateProfile(){
 console.log(result)
 
 alert(
-  result. message ||
+  result.message ||
   JSON.stringify(result.detail)
 )
 
@@ -1366,7 +1368,7 @@ async function addBalance(){
   const email = localStorage.getItem("email")
   const amount = document.getElementById("add_balance_amount").value
 
-  const response = await fetch("http://127.0.0.1:8085/add-balance", {
+  const response = await fetch(`${BASE_URL}/add-balance`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -1376,7 +1378,7 @@ async function addBalance(){
   })
 
   const result = await response.json()
-  alert(result.message || result. error)
+  alert(result.message || result.error)
 
   closeAddBalanceModal()
 
@@ -1389,7 +1391,7 @@ async function loadTransactions(){
   const email = localStorage.getItem("email")
 
   const response = await fetch(
-    `http://127.0.0.1:8085/history/${email}`
+    `${BASE_URL}/history/${email}`
   )
 
   const transactions = await response.json()
@@ -1452,7 +1454,7 @@ async function signup(){
     }
 
     const response = await fetch(
-      "http://127.0.0.1:8085/auth/signup",
+      `${BASE_URL}/auth/signup`,
       {
         method:"POST",
 
@@ -1467,7 +1469,7 @@ async function signup(){
     const result = await response.json()
 
     document.getElementById("signup_message").innerText =
-    result.message || result. error || "Signup failed"
+    result.message || result.error || "Signup failed"
 
     if(response.ok){
 
@@ -1502,7 +1504,7 @@ async function login(){
     }
 
     const response = await fetch(
-      "http://127.0.0.1:8085/auth/login",
+      `${BASE_URL}/auth/login`,
       {
         method:"POST",
 
@@ -1517,7 +1519,7 @@ async function login(){
     const result = await response.json()
 
     document.getElementById("login_message").innerText =
-      result. message || result.error
+      result.message || result.error
 
     if(response.ok){
 
@@ -1542,13 +1544,13 @@ function downloadStatement(){
   localStorage.getItem("email")
 
   window.open(
-    `http://127.0.0.1:8085/download-statement/${email}`
+    `${BASE_URL}/download-statement/${email}`
   )
 }
 async function schedulePayment(){
   const senderEmail = localStorage.getItem("email");
 
-  const response = await fetch("http://127.0.0.1:8085/schedule-payment", {
+  const response = await fetch(`${BASE_URL}/schedule-payment`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -1588,7 +1590,7 @@ async function loadAnalytics(){
   localStorage.getItem("email")
 
   const response = await fetch(
-    `http://127.0.0.1:8085/analytics/${email}`
+    `${BASE_URL}/analytics/${email}`
   )
 
   const result = await response.json()
@@ -1616,7 +1618,7 @@ async function loadAnalytics(){
 async function loadAccounts(){
   const email = localStorage.getItem("email");
 
-  const response = await fetch(`http://127.0.0.1:8085/accounts/${email}`);
+  const response = await fetch(`${BASE_URL}/accounts/${email}`);
 
   const data = await response.json();
 
@@ -1661,7 +1663,7 @@ async function switchAccount(){
   const account_no = document.getElementById("account_selector").value
   const email = localStorage.getItem("email")
 
-  const response = await fetch("http://127.0.0.1:8085/accounts/switch", {
+  const response = await fetch(`${BASE_URL}/accounts/switch`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, account_no })
@@ -1688,7 +1690,7 @@ async function verifyOTP(){
       otp: document.getElementById("otp_value").value
     }
 
-    const response = await fetch("http://127.0.0.1:8085/auth/verify-otp", {
+    const response = await fetch(`${BASE_URL}/auth/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
@@ -1725,7 +1727,7 @@ async function verifyOTP(){
 async function loadDashboard(email){
 
   const response = await fetch(
-    `http://127.0.0.1:8085/profile/${email}`
+    `${BASE_URL}/profile/${email}`
   )
 
   const result = await response.json()
@@ -1767,7 +1769,7 @@ async function loadAllUsers(){
   try{
 
     const response = await fetch(
-      "http://127.0.0.1:8085/search/a"
+      `${BASE_URL}/search/a`
     )
 
     const result = await response.json()
@@ -1832,13 +1834,13 @@ async function searchUsers(){
       }
 
       const response = await fetch(
-        `http://127.0.0.1:8085/search/${query}`
+        `${BASE_URL}/search/${query}`
       )
       const result = await response.json()
 
 
 
-      const users = result. users
+      const users = result.users
 
       if(!Array.isArray(users)){
         return
@@ -1915,7 +1917,7 @@ async function createAccount(){
     localStorage.getItem("email")
 
   const response = await fetch(
-    "http://127.0.0.1:8085/accounts/create",
+    `${BASE_URL}/accounts/create`,
     {
       method:"POST",
       headers:{
@@ -1963,7 +1965,7 @@ async function confirmSendMoney(){
       return;
     }
 
-    let endpoint = "http://127.0.0.1:8085/send-money";
+    let endpoint =`${BASE_URL}/send-money`;
     let bodyData = {
       sender_email: senderEmail,
       receiver_email: selectedReceiver,
@@ -1974,7 +1976,7 @@ async function confirmSendMoney(){
 
     // If dates are provided, modify payload fields to exactly match backend models
     if(scheduledDate && scheduledTime){
-      endpoint = "http://127.0.0.1:8085/schedule-payment";
+      endpoint = `${BASE_URL}/schedule-payment`;
       bodyData.scheduled_date = scheduledDate;
       bodyData.scheduled_time = scheduledTime;
     }

@@ -106,3 +106,12 @@ def execute_scheduled_payments():
 
     finally:
         db.close()
+
+async def start_scheduler():
+    scheduler.add_job(
+        execute_scheduled_payments,
+        "interval",
+        seconds=10
+    )
+    scheduler.start()
+    print("🔥 Scheduler started!")

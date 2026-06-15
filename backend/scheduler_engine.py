@@ -81,3 +81,7 @@ async def start_scheduler():
     )
     scheduler.start()
     print("Scheduler started successfully!")
+
+def execute_scheduled_payments():
+    print("🔥 Scheduler Tick")
+    db = SessionLocal()

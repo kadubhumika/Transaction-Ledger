@@ -31,6 +31,7 @@ async def on_startup():
     with ThreadPoolExecutor() as pool:
         await loop.run_in_executor(pool, init_db)
     await start_scheduler()
+    print("🔥 Scheduler started!")
     print("Scheduler started successfully! ")
 
 app.add_middleware(

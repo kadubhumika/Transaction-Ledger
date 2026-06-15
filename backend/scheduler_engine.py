@@ -30,6 +30,8 @@ def execute_scheduled_payments():
                 f"{payment.status} | "
                 f"{payment.scheduled_time}"
             )
+            print("NOW =", datetime.now())
+            print("PAYMENT =", payment.scheduled_time)
 
             if payment.scheduled_time <= datetime.now():
 

@@ -1,6 +1,7 @@
 from backend.database import SessionLocal
 
 from backend.models import ScheduledPayment
+from datetime import datetime, timedelta
 
 from datetime import datetime
 def create_scheduled_payment(data):
@@ -8,6 +9,7 @@ def create_scheduled_payment(data):
         f"{data.scheduled_date} {data.scheduled_time}",
         "%Y-%m-%d %H:%M"
     )
+    scheduled_datetime = scheduled_datetime - timedelta(hours=5, minutes=30)
 
     db = SessionLocal()
 
